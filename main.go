@@ -15,6 +15,11 @@ import (
 	"strings"
 
 	"github.com/pointlander/gradient/tf64"
+
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
+	"gonum.org/v1/plot/vg/draw"
 )
 
 const (
@@ -90,6 +95,7 @@ type Neuron struct {
 	Set       *tf64.Set
 	rng       *rand.Rand
 	Images    *gif.GIF
+	XYs       plotter.XYs
 }
 
 // NewNeuron creates a new neuron
@@ -124,6 +130,7 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 		rng:    rng,
 		Set:    &set,
 		Images: &gif.GIF{},
+		XYs:    make(plotter.XYs, 0, 8),
 	}
 }
 
@@ -249,13 +256,16 @@ func (n *Neuron) Iterate(iterations int) {
 		n.Iteration++
 	}
 	//fmt.Println(l)
-
+	count := 0
 	image := image.NewPaletted(image.Rect(0, 0, 1024, 512), palette)
 	{
 		x := n.Set.ByName["x"]
 		minX, maxX, minY, maxY := math.MaxFloat64, -math.MaxFloat64, math.MaxFloat64, -math.MaxFloat64
 		for i := range x.S[1] {
 			x, y := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
+			if x > -1 {
+				count++
+			}
 			if x < minX {
 				minX = x
 			}
@@ -298,6 +308,9 @@ func (n *Neuron) Iterate(iterations int) {
 		minX, maxX, minY, maxY := math.MaxFloat64, -math.MaxFloat64, math.MaxFloat64, -math.MaxFloat64
 		for i := range x.S[1] {
 			x, y := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
+			if x > -1 {
+				count++
+			}
 			if x < minX {
 				minX = x
 			}
@@ -341,6 +354,7 @@ func (n *Neuron) Iterate(iterations int) {
 	}
 	n.Images.Image = append(n.Images.Image, image)
 	n.Images.Delay = append(n.Images.Delay, 10)
+	n.XYs = append(n.XYs, plotter.XY{X: float64(n.Iteration), Y: float64(count)})
 }
 
 func main() {
@@ -356,6 +370,26 @@ func main() {
 		}
 		defer out.Close()
 		err = gif.EncodeAll(out, neuron.Images)
+		if err != nil {
+			panic(err)
+		}
+	}
+	{
+		p := plot.New()
+
+		p.Title.Text = "count vs iteration"
+		p.X.Label.Text = "iteration"
+		p.Y.Label.Text = "count"
+
+		scatter, err := plotter.NewScatter(neuron.XYs)
+		if err != nil {
+			panic(err)
+		}
+		scatter.GlyphStyle.Radius = vg.Length(1)
+		scatter.GlyphStyle.Shape = draw.CircleGlyph{}
+		p.Add(scatter)
+
+		err = p.Save(8*vg.Inch, 8*vg.Inch, "dist.png")
 		if err != nil {
 			panic(err)
 		}
