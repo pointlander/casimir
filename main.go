@@ -146,13 +146,13 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = -1
 		x.X[7] = 3 - 2
 
-		x.X[8] = 1
+		x.X[8] = 2
 		x.X[9] = 0 - 2
-		x.X[10] = 1
+		x.X[10] = 2
 		x.X[11] = 1 - 2
-		x.X[12] = 1
+		x.X[12] = 2
 		x.X[13] = 2 - 2
-		x.X[14] = 1
+		x.X[14] = 2
 		x.X[15] = 3 - 2
 
 		x.X[16] = 0
@@ -172,19 +172,19 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = -1
 		x.X[7] = 3 - 2
 
-		x.X[8] = 1
+		x.X[8] = 2
 		x.X[9] = 0 - 2
-		x.X[10] = 1
+		x.X[10] = 2
 		x.X[11] = 1 - 2
-		x.X[12] = 1
+		x.X[12] = 2
 		x.X[13] = 2 - 2
-		x.X[14] = 1
+		x.X[14] = 2
 		x.X[15] = 3 - 2
 
-		x.X[16] = 0 - 2
-		x.X[17] = 1
-		x.X[18] = 0 - 2
-		x.X[19] = 2
+		x.X[16] = 0
+		x.X[17] = 1 - 2
+		x.X[18] = 0
+		x.X[19] = 2 - 2
 	}
 
 	euclidean := tf64.B(EuclideanReal)
