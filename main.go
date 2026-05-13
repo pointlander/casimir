@@ -267,10 +267,18 @@ func (n *Neuron) Iterate(iterations int) {
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
 			if i < 4 || (i >= 8 && i < 10) {
-				image.Set(int(x), int(y), color.RGBA{0, 0, 0xff, 0xff})
+				for n := -1; n < 2; n++ {
+					for m := -1; m < 2; m++ {
+						image.Set(n+int(x), m+int(y), color.RGBA{0x55, 0x55, 0x55, 0xff})
+					}
+				}
 				continue
 			}
-			image.Set(int(x), int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
+			for n := -1; n < 2; n++ {
+				for m := -1; m < 2; m++ {
+					image.Set(n+int(x), m+int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
+				}
+			}
 		}
 	}
 	{
@@ -301,10 +309,20 @@ func (n *Neuron) Iterate(iterations int) {
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
 			if i < 4 || (i >= 8 && i < 10) {
-				image.Set(int(x)+512, int(y), color.RGBA{0, 0, 0xff, 0xff})
+				for n := -1; n < 2; n++ {
+					for m := -1; m < 2; m++ {
+
+						image.Set(n+int(x)+512, m+int(y), color.RGBA{0x55, 0x55, 0x55, 0xff})
+					}
+				}
 				continue
 			}
-			image.Set(int(x)+512, int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
+			for n := -1; n < 2; n++ {
+				for m := -1; m < 2; m++ {
+
+					image.Set(n+int(x)+512, m+int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
+				}
+			}
 		}
 	}
 	{
