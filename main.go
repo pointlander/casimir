@@ -127,6 +127,10 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 	}
 }
 
+func isDevice(i int) bool {
+	return i < 4 || (i >= 8 && i < 10)
+}
+
 // Iterate iterates the neuron
 func (n *Neuron) Iterate(iterations int) {
 	drop := .3
@@ -226,6 +230,9 @@ func (n *Neuron) Iterate(iterations int) {
 		}
 		for _, w := range n.Set.Weights {
 			for ii, d := range w.D {
+				if isDevice(ii / w.S[0]) {
+					continue
+				}
 				g := d * scaling
 				m := B1*w.States[StateM][ii] + (1-B1)*g
 				v := B2*w.States[StateV][ii] + (1-B2)*g*g
@@ -266,7 +273,7 @@ func (n *Neuron) Iterate(iterations int) {
 			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
-			if i < 4 || (i >= 8 && i < 10) {
+			if isDevice(i) {
 				for n := -1; n < 2; n++ {
 					for m := -1; m < 2; m++ {
 						image.Set(n+int(x), m+int(y), color.RGBA{0x55, 0x55, 0x55, 0xff})
@@ -308,7 +315,7 @@ func (n *Neuron) Iterate(iterations int) {
 			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
-			if i < 4 || (i >= 8 && i < 10) {
+			if isDevice(i) {
 				for n := -1; n < 2; n++ {
 					for m := -1; m < 2; m++ {
 
