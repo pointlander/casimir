@@ -97,8 +97,8 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 	rng := rand.New(rand.NewSource(seed))
 
 	set := tf64.NewSet()
-	set.Add("x", 2, rows)
-	set.Add("y", 2, rows)
+	set.Add("x", 2, rows+10)
+	set.Add("y", 2, rows+10)
 
 	for ii := range set.Weights {
 		w := set.Weights[ii]
@@ -133,6 +133,58 @@ func (n *Neuron) Iterate(iterations int) {
 	dropout := map[string]interface{}{
 		"rng":  n.rng,
 		"drop": &drop,
+	}
+
+	{
+		x := n.Set.ByName["x"]
+		x.X[0] = -1
+		x.X[1] = 0 - 2
+		x.X[2] = -1
+		x.X[3] = 1 - 2
+		x.X[4] = -1
+		x.X[5] = 2 - 2
+		x.X[6] = -1
+		x.X[7] = 3 - 2
+
+		x.X[8] = 1
+		x.X[9] = 0 - 2
+		x.X[10] = 1
+		x.X[11] = 1 - 2
+		x.X[12] = 1
+		x.X[13] = 2 - 2
+		x.X[14] = 1
+		x.X[15] = 3 - 2
+
+		x.X[16] = 0
+		x.X[17] = 1 - 2
+		x.X[18] = 0
+		x.X[19] = 2 - 2
+	}
+
+	{
+		x := n.Set.ByName["y"]
+		x.X[0] = -1
+		x.X[1] = 0 - 2
+		x.X[2] = -1
+		x.X[3] = 1 - 2
+		x.X[4] = -1
+		x.X[5] = 2 - 2
+		x.X[6] = -1
+		x.X[7] = 3 - 2
+
+		x.X[8] = 1
+		x.X[9] = 0 - 2
+		x.X[10] = 1
+		x.X[11] = 1 - 2
+		x.X[12] = 1
+		x.X[13] = 2 - 2
+		x.X[14] = 1
+		x.X[15] = 3 - 2
+
+		x.X[16] = 0 - 2
+		x.X[17] = 1
+		x.X[18] = 0 - 2
+		x.X[19] = 2
 	}
 
 	euclidean := tf64.B(EuclideanReal)
@@ -214,6 +266,10 @@ func (n *Neuron) Iterate(iterations int) {
 			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
+			if i < 10 {
+				image.Set(int(x), int(y), color.RGBA{0, 0, 0xff, 0xff})
+				continue
+			}
 			image.Set(int(x), int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
 		}
 	}
@@ -244,6 +300,10 @@ func (n *Neuron) Iterate(iterations int) {
 			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
+			if i < 10 {
+				image.Set(int(x)+512, int(y), color.RGBA{0, 0, 0xff, 0xff})
+				continue
+			}
 			image.Set(int(x)+512, int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
 		}
 	}
