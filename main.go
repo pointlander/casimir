@@ -146,14 +146,14 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = -1
 		x.X[7] = 3 - 2
 
-		x.X[8] = 2
+		/*x.X[8] = 2
 		x.X[9] = 0 - 2
 		x.X[10] = 2
 		x.X[11] = 1 - 2
 		x.X[12] = 2
 		x.X[13] = 2 - 2
 		x.X[14] = 2
-		x.X[15] = 3 - 2
+		x.X[15] = 3 - 2*/
 
 		x.X[16] = 0
 		x.X[17] = 1 - 2
@@ -172,14 +172,14 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = -1
 		x.X[7] = 3 - 2
 
-		x.X[8] = 2
+		/*x.X[8] = 2
 		x.X[9] = 0 - 2
 		x.X[10] = 2
 		x.X[11] = 1 - 2
 		x.X[12] = 2
 		x.X[13] = 2 - 2
 		x.X[14] = 2
-		x.X[15] = 3 - 2
+		x.X[15] = 3 - 2*/
 
 		x.X[16] = 0
 		x.X[17] = 1 - 2
@@ -266,7 +266,7 @@ func (n *Neuron) Iterate(iterations int) {
 			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
-			if i < 10 {
+			if i < 4 || (i >= 8 && i < 10) {
 				image.Set(int(x), int(y), color.RGBA{0, 0, 0xff, 0xff})
 				continue
 			}
@@ -300,7 +300,7 @@ func (n *Neuron) Iterate(iterations int) {
 			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
 			x := 500*(xx-minX)/(maxX-minX) + 6
 			y := 500*(yy-minY)/(maxY-minY) + 6
-			if i < 10 {
+			if i < 4 || (i >= 8 && i < 10) {
 				image.Set(int(x)+512, int(y), color.RGBA{0, 0, 0xff, 0xff})
 				continue
 			}
