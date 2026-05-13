@@ -6,8 +6,12 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/color"
+	"image/gif"
 	"math"
 	"math/rand"
+	"os"
 	"strings"
 
 	"github.com/pointlander/gradient/tf64"
@@ -18,6 +22,8 @@ const (
 	B1 = 0.8
 	// B2 exponential decay rate for the second-moment estimates
 	B2 = 0.89
+	// Eta is the learning rate
+	Eta = 1.0e-1
 )
 
 const (
@@ -28,6 +34,15 @@ const (
 	// StateTotal is the total number of states
 	StateTotal
 )
+
+var palette = []color.Color{}
+
+func init() {
+	for i := range 256 {
+		g := byte(i)
+		palette = append(palette, color.RGBA{g, g, g, 0xff})
+	}
+}
 
 // Euclidean computes the euclidean distance between all row vectors and all row vectors
 func EuclideanReal(k tf64.Continuation, node int, a, b *tf64.V, options ...map[string]interface{}) bool {
@@ -74,6 +89,7 @@ type Neuron struct {
 	Iteration int
 	Set       *tf64.Set
 	rng       *rand.Rand
+	Images    *gif.GIF
 }
 
 // NewNeuron creates a new neuron
@@ -82,6 +98,7 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 
 	set := tf64.NewSet()
 	set.Add("x", 2, rows)
+	set.Add("y", 2, rows)
 
 	for ii := range set.Weights {
 		w := set.Weights[ii]
@@ -104,13 +121,14 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 	}
 
 	return Neuron{
-		rng: rng,
-		Set: &set,
+		rng:    rng,
+		Set:    &set,
+		Images: &gif.GIF{},
 	}
 }
 
 // Iterate iterates the neuron
-func (n *Neuron) Iterate(iterations int, Eta float64, y *tf64.Set) {
+func (n *Neuron) Iterate(iterations int) {
 	drop := .3
 	dropout := map[string]interface{}{
 		"rng":  n.rng,
@@ -119,10 +137,10 @@ func (n *Neuron) Iterate(iterations int, Eta float64, y *tf64.Set) {
 
 	euclidean := tf64.B(EuclideanReal)
 
-	l0 := tf64.Mul(tf64.Dropout(tf64.Square(y.Get("x")), dropout),
+	l0 := tf64.Mul(tf64.Dropout(tf64.Square(n.Set.Get("y")), dropout),
 		tf64.Inv(euclidean(n.Set.Get("x"), n.Set.Get("x"))))
 	loss := tf64.Avg(tf64.Quadratic(tf64.Mul(tf64.Dropout(tf64.Square(n.Set.Get("x")), dropout),
-		tf64.Inv(euclidean(y.Get("x"), y.Get("x")))), l0))
+		tf64.Inv(euclidean(n.Set.Get("y"), n.Set.Get("y")))), l0))
 
 	var l float64
 	for range iterations {
@@ -136,7 +154,6 @@ func (n *Neuron) Iterate(iterations int, Eta float64, y *tf64.Set) {
 		}
 
 		n.Set.Zero()
-		y.Zero()
 		l = tf64.Gradient(loss).X[0]
 		if math.IsNaN(l) || math.IsInf(l, 0) {
 			fmt.Println(iteration, l)
@@ -173,8 +190,89 @@ func (n *Neuron) Iterate(iterations int, Eta float64, y *tf64.Set) {
 		n.Iteration++
 	}
 	//fmt.Println(l)
+
+	image := image.NewPaletted(image.Rect(0, 0, 1024, 512), palette)
+	{
+		x := n.Set.ByName["x"]
+		minX, maxX, minY, maxY := math.MaxFloat64, -math.MaxFloat64, math.MaxFloat64, -math.MaxFloat64
+		for i := range x.S[1] {
+			x, y := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
+			if x < minX {
+				minX = x
+			}
+			if x > maxX {
+				maxX = x
+			}
+			if y < minY {
+				minY = y
+			}
+			if y > maxY {
+				maxY = y
+			}
+		}
+		for i := range x.S[1] {
+			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
+			x := 500*(xx-minX)/(maxX-minX) + 6
+			y := 500*(yy-minY)/(maxY-minY) + 6
+			image.Set(int(x), int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
+		}
+	}
+	{
+		for i := range 512 {
+			image.Set(512, int(i), color.RGBA{0xff, 0xff, 0xff, 0xff})
+		}
+	}
+	{
+		x := n.Set.ByName["y"]
+		minX, maxX, minY, maxY := math.MaxFloat64, -math.MaxFloat64, math.MaxFloat64, -math.MaxFloat64
+		for i := range x.S[1] {
+			x, y := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
+			if x < minX {
+				minX = x
+			}
+			if x > maxX {
+				maxX = x
+			}
+			if y < minY {
+				minY = y
+			}
+			if y > maxY {
+				maxY = y
+			}
+		}
+		for i := range x.S[1] {
+			xx, yy := x.X[i*x.S[0]], x.X[i*x.S[0]+1]
+			x := 500*(xx-minX)/(maxX-minX) + 6
+			y := 500*(yy-minY)/(maxY-minY) + 6
+			image.Set(int(x)+512, int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
+		}
+	}
+	{
+		for i := range 512 {
+			for ii := range 4 {
+				image.Set(int(float64(n.Iteration*i)/float64(512)), 511-ii, color.RGBA{0xff, 0xff, 0xff, 0xff})
+			}
+		}
+	}
+	n.Images.Image = append(n.Images.Image, image)
+	n.Images.Delay = append(n.Images.Delay, 10)
 }
 
 func main() {
+	neuron := NewNeuron(1, 33, 33)
+	for range 1024 {
+		neuron.Iterate(1)
+	}
 
+	{
+		out, err := os.Create("casimir.gif")
+		if err != nil {
+			panic(err)
+		}
+		defer out.Close()
+		err = gif.EncodeAll(out, neuron.Images)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
