@@ -331,7 +331,6 @@ func (n *Neuron) Iterate(iterations int) {
 			if isDevice(i) {
 				for n := -1; n < 2; n++ {
 					for m := -1; m < 2; m++ {
-
 						image.Set(n+int(x)+512, m+int(y), color.RGBA{0x55, 0x55, 0x55, 0xff})
 					}
 				}
@@ -339,7 +338,6 @@ func (n *Neuron) Iterate(iterations int) {
 			}
 			for n := -1; n < 2; n++ {
 				for m := -1; m < 2; m++ {
-
 					image.Set(n+int(x)+512, m+int(y), color.RGBA{0xff, 0xff, 0xff, 0xff})
 				}
 			}
