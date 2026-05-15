@@ -1,4 +1,29 @@
 # Neural network n body simulation
+## Theory
+```
+From my clustering algorithm:
+A^2*B = B
+From the Heisenberg uncertainty principle:
+A*B = B*A
+Combining the two:
+A^2*B = B^2*A
+A function that calculates the euclidean distance between
+each entry in the matrix and takes the inverse of it is then 
+used thus:
+A^2*euclidean(B)=B^2*euclidean(A)
+Dropout is then used:
+dropout(A^2)*euclidean(B)=dropout(B^2)*euclidean(A)
+This results in a neural network n body simulation in
+two realities: A and B.
+```
+## Code
+```go
+euclidean := tf64.B(EuclideanReal)
+l0 := tf64.Mul(tf64.Dropout(tf64.Square(n.Set.Get("y")), dropout),
+	tf64.Inv(euclidean(n.Set.Get("x"), n.Set.Get("x"))))
+loss := tf64.Avg(tf64.Quadratic(tf64.Mul(tf64.Dropout(tf64.Square(n.Set.Get("x")), dropout),
+	tf64.Inv(euclidean(n.Set.Get("y"), n.Set.Get("y")))), l0))
+```
 ## Original
 ### Simulation
 ![original simulation](casimir.gif?raw=true)
