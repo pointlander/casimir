@@ -5,6 +5,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"image"
 	"image/color"
@@ -135,6 +136,9 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 }
 
 func isDevice(i int) bool {
+	if *FlagControl {
+		return i < 4
+	}
 	return i < 4 || (i >= 8 && i < 10)
 }
 
@@ -166,10 +170,12 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[14] = 2
 		x.X[15] = 3 - 2*/
 
-		x.X[16] = 0
-		x.X[17] = 1 - 2
-		x.X[18] = 0
-		x.X[19] = 2 - 2
+		if !*FlagControl {
+			x.X[16] = 0
+			x.X[17] = 1 - 2
+			x.X[18] = 0
+			x.X[19] = 2 - 2
+		}
 	}
 
 	{
@@ -192,10 +198,12 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[14] = 2
 		x.X[15] = 3 - 2*/
 
-		x.X[16] = 0
-		x.X[17] = 1 - 2
-		x.X[18] = 0
-		x.X[19] = 2 - 2
+		if !*FlagControl {
+			x.X[16] = 0
+			x.X[17] = 1 - 2
+			x.X[18] = 0
+			x.X[19] = 2 - 2
+		}
 	}
 
 	euclidean := tf64.B(EuclideanReal)
@@ -355,14 +363,25 @@ func (n *Neuron) Iterate(iterations int) {
 	n.XYs = append(n.XYs, plotter.XY{X: float64(n.Iteration), Y: float64(count)})
 }
 
+var (
+	// FlagControl control experiment
+	FlagControl = flag.Bool("control", false, "control experiment")
+)
+
 func main() {
+	flag.Parse()
+
 	neuron := NewNeuron(1, 33, 33)
 	for range 1024 {
 		neuron.Iterate(1)
 	}
 
 	{
-		out, err := os.Create("casimir.gif")
+		name := "casimir.gif"
+		if *FlagControl {
+			name = "control_casimir.gif"
+		}
+		out, err := os.Create(name)
 		if err != nil {
 			panic(err)
 		}
@@ -387,7 +406,11 @@ func main() {
 		scatter.GlyphStyle.Shape = draw.CircleGlyph{}
 		p.Add(scatter)
 
-		err = p.Save(8*vg.Inch, 8*vg.Inch, "dist.png")
+		name := "dist.png"
+		if *FlagControl {
+			name = "control_dist.png"
+		}
+		err = p.Save(8*vg.Inch, 8*vg.Inch, name)
 		if err != nil {
 			panic(err)
 		}
