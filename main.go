@@ -104,8 +104,14 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 	rng := rand.New(rand.NewSource(seed))
 
 	set := tf64.NewSet()
-	set.Add("x", 2, rows+10)
-	set.Add("y", 2, rows+10)
+	extra := 6
+	if *FlagNull {
+		extra = 0
+	} else if *FlagControl {
+		extra = 4
+	}
+	set.Add("x", 2, rows+extra)
+	set.Add("y", 2, rows+extra)
 
 	for ii := range set.Weights {
 		w := set.Weights[ii]
@@ -142,7 +148,7 @@ func isDevice(i int) bool {
 	if *FlagControl {
 		return i < 4
 	}
-	return i < 4 || (i >= 8 && i < 10)
+	return i < 4 || (i >= 4 && i < 6)
 }
 
 // Iterate iterates the neuron
@@ -166,20 +172,11 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = -1
 		x.X[7] = 3 - 2
 
-		/*x.X[8] = 2
-		x.X[9] = 0 - 2
-		x.X[10] = 2
-		x.X[11] = 1 - 2
-		x.X[12] = 2
-		x.X[13] = 2 - 2
-		x.X[14] = 2
-		x.X[15] = 3 - 2*/
-
 		if !*FlagControl {
-			x.X[16] = 0
-			x.X[17] = 1 - 2
-			x.X[18] = 0
-			x.X[19] = 2 - 2
+			x.X[8] = 0
+			x.X[9] = 1 - 2
+			x.X[10] = 0
+			x.X[11] = 2 - 2
 		}
 	} else {
 		x := n.Set.ByName["x"]
@@ -211,20 +208,11 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = -1
 		x.X[7] = 3 - 2
 
-		/*x.X[8] = 2
-		x.X[9] = 0 - 2
-		x.X[10] = 2
-		x.X[11] = 1 - 2
-		x.X[12] = 2
-		x.X[13] = 2 - 2
-		x.X[14] = 2
-		x.X[15] = 3 - 2*/
-
 		if !*FlagControl {
-			x.X[16] = 0
-			x.X[17] = 1 - 2
-			x.X[18] = 0
-			x.X[19] = 2 - 2
+			x.X[8] = 0
+			x.X[9] = 1 - 2
+			x.X[10] = 0
+			x.X[11] = 2 - 2
 		}
 	} else {
 		x := n.Set.ByName["y"]
@@ -407,11 +395,12 @@ var (
 	FlagAlternate = flag.Bool("alternate", false, "alternate experiment")
 	// FlagNull null experiment
 	FlagNull = flag.Bool("null", false, "null experiment")
+	// FlagAll runs all of the experiments
+	FlagAll = flag.Bool("all", false, "run all of the experiments")
 )
 
-func main() {
-	flag.Parse()
-
+// Simulation runs the simulation
+func Simulation() {
 	neuron := NewNeuron(1, 33, 33)
 	for range 1024 {
 		neuron.Iterate(1)
@@ -464,4 +453,31 @@ func main() {
 			panic(err)
 		}
 	}
+}
+
+func main() {
+	flag.Parse()
+
+	if *FlagAll {
+		fmt.Println("original")
+		Simulation()
+
+		fmt.Println("control")
+		*FlagControl = true
+		Simulation()
+		*FlagControl = false
+
+		fmt.Println("alternate")
+		*FlagAlternate = true
+		Simulation()
+		*FlagControl = false
+
+		fmt.Println("null")
+		*FlagNull = true
+		Simulation()
+		*FlagNull = false
+		return
+	}
+
+	Simulation()
 }
