@@ -136,6 +136,9 @@ func NewNeuron(seed int64, rows, cols int) Neuron {
 }
 
 func isDevice(i int) bool {
+	if *FlagNull {
+		return false
+	}
 	if *FlagControl {
 		return i < 4
 	}
@@ -150,7 +153,9 @@ func (n *Neuron) Iterate(iterations int) {
 		"drop": &drop,
 	}
 
-	if !*FlagAlternate {
+	if *FlagNull {
+		// no structures
+	} else if !*FlagAlternate {
 		x := n.Set.ByName["x"]
 		x.X[0] = -1
 		x.X[1] = 0 - 2
@@ -193,7 +198,9 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[19] = 2 - 2
 	}
 
-	if !*FlagAlternate {
+	if *FlagNull {
+		// no structures
+	} else if !*FlagAlternate {
 		x := n.Set.ByName["y"]
 		x.X[0] = -1
 		x.X[1] = 0 - 2
@@ -398,6 +405,8 @@ var (
 	FlagControl = flag.Bool("control", false, "control experiment")
 	// FlagAlternate alternate experiment
 	FlagAlternate = flag.Bool("alternate", false, "alternate experiment")
+	// FlagNull null experiment
+	FlagNull = flag.Bool("null", false, "null experiment")
 )
 
 func main() {
@@ -414,6 +423,8 @@ func main() {
 			name = "control_casimir.gif"
 		} else if *FlagAlternate {
 			name = "alternate_casimir.gif"
+		} else if *FlagNull {
+			name = "null_casimir.gif"
 		}
 		out, err := os.Create(name)
 		if err != nil {
@@ -445,6 +456,8 @@ func main() {
 			name = "control_dist.png"
 		} else if *FlagAlternate {
 			name = "alternate_dist.png"
+		} else if *FlagNull {
+			name = "null_dist.png"
 		}
 		err = p.Save(8*vg.Inch, 8*vg.Inch, name)
 		if err != nil {
