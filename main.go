@@ -150,7 +150,7 @@ func (n *Neuron) Iterate(iterations int) {
 		"drop": &drop,
 	}
 
-	{
+	if !*FlagAlternate {
 		x := n.Set.ByName["x"]
 		x.X[0] = -1
 		x.X[1] = 0 - 2
@@ -176,9 +176,24 @@ func (n *Neuron) Iterate(iterations int) {
 			x.X[18] = 0
 			x.X[19] = 2 - 2
 		}
+	} else {
+		x := n.Set.ByName["x"]
+		x.X[0] = 0
+		x.X[1] = 0 - 2
+		x.X[2] = 9
+		x.X[3] = 1 - 2
+		x.X[4] = 0
+		x.X[5] = 2 - 2
+		x.X[6] = 0
+		x.X[7] = 3 - 2
+
+		x.X[16] = -1
+		x.X[17] = 1 - 2
+		x.X[18] = -1
+		x.X[19] = 2 - 2
 	}
 
-	{
+	if !*FlagAlternate {
 		x := n.Set.ByName["y"]
 		x.X[0] = -1
 		x.X[1] = 0 - 2
@@ -204,6 +219,21 @@ func (n *Neuron) Iterate(iterations int) {
 			x.X[18] = 0
 			x.X[19] = 2 - 2
 		}
+	} else {
+		x := n.Set.ByName["y"]
+		x.X[0] = 0
+		x.X[1] = 0 - 2
+		x.X[2] = 0
+		x.X[3] = 1 - 2
+		x.X[4] = 0
+		x.X[5] = 2 - 2
+		x.X[6] = 0
+		x.X[7] = 3 - 2
+
+		x.X[16] = -1
+		x.X[17] = 1 - 2
+		x.X[18] = -1
+		x.X[19] = 2 - 2
 	}
 
 	euclidean := tf64.B(EuclideanReal)
@@ -366,6 +396,8 @@ func (n *Neuron) Iterate(iterations int) {
 var (
 	// FlagControl control experiment
 	FlagControl = flag.Bool("control", false, "control experiment")
+	// FlagAlternate alternate experiment
+	FlagAlternate = flag.Bool("alternate", false, "alternate experiment")
 )
 
 func main() {
@@ -380,6 +412,8 @@ func main() {
 		name := "casimir.gif"
 		if *FlagControl {
 			name = "control_casimir.gif"
+		} else if *FlagAlternate {
+			name = "alternate_casimir.gif"
 		}
 		out, err := os.Create(name)
 		if err != nil {
@@ -409,6 +443,8 @@ func main() {
 		name := "dist.png"
 		if *FlagControl {
 			name = "control_dist.png"
+		} else if *FlagAlternate {
+			name = "alternate_dist.png"
 		}
 		err = p.Save(8*vg.Inch, 8*vg.Inch, name)
 		if err != nil {
