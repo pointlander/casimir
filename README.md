@@ -24,6 +24,9 @@ l0 := tf64.Mul(tf64.Dropout(tf64.Square(n.Set.Get("y")), dropout),
 loss := tf64.Avg(tf64.Quadratic(tf64.Mul(tf64.Dropout(tf64.Square(n.Set.Get("x")), dropout),
 	tf64.Inv(euclidean(n.Set.Get("y"), n.Set.Get("y")))), l0))
 ```
+## Experiments
+Below are experiments using different fixed structures in the presence of free particles.
+The number of particles to the right of the structure are plotted together for both realities.
 ## Original
 ### Simulation
 ![original simulation](casimir.gif?raw=true)
