@@ -189,10 +189,10 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = 0
 		x.X[7] = 3 - 2
 
-		x.X[16] = -1
-		x.X[17] = 1 - 2
-		x.X[18] = -1
-		x.X[19] = 2 - 2
+		x.X[8] = -1
+		x.X[9] = 1 - 2
+		x.X[10] = -1
+		x.X[11] = 2 - 2
 	}
 
 	if *FlagNull {
@@ -225,10 +225,10 @@ func (n *Neuron) Iterate(iterations int) {
 		x.X[6] = 0
 		x.X[7] = 3 - 2
 
-		x.X[16] = -1
-		x.X[17] = 1 - 2
-		x.X[18] = -1
-		x.X[19] = 2 - 2
+		x.X[8] = -1
+		x.X[9] = 1 - 2
+		x.X[10] = -1
+		x.X[11] = 2 - 2
 	}
 
 	euclidean := tf64.B(EuclideanReal)
@@ -470,7 +470,7 @@ func main() {
 		fmt.Println("alternate")
 		*FlagAlternate = true
 		Simulation()
-		*FlagControl = false
+		*FlagAlternate = false
 
 		fmt.Println("null")
 		*FlagNull = true
