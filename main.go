@@ -159,7 +159,15 @@ func (n *Neuron) Iterate(iterations int) {
 		"drop": &drop,
 	}
 
-	for _, x := range n.Set.Weights {
+	if *FlagSplit {
+		x := n.Set.ByName["x"]
+		y := n.Set.ByName["y"]
+		for i, value := range x.X {
+			y.X[i] = value
+		}
+	}
+
+	for i, x := range n.Set.Weights {
 		if *FlagNull {
 			// no structures
 		} else if *FlagAlternate {
@@ -185,6 +193,37 @@ func (n *Neuron) Iterate(iterations int) {
 			x.X[5] = 2 - 2
 			x.X[6] = -1
 			x.X[7] = 3 - 2
+		} else if *FlagSplit {
+			if i == 0 {
+				x.X[0] = -1
+				x.X[1] = 0 - 2
+				x.X[2] = -1
+				x.X[3] = 1 - 2
+				x.X[4] = -1
+				x.X[5] = 2 - 2
+				x.X[6] = -1
+				x.X[7] = 3 - 2
+
+				x.X[8] = 0
+				x.X[9] = 1 - 2
+				x.X[10] = 0
+				x.X[11] = 2 - 2
+
+			} else {
+				x.X[0] = -1
+				x.X[1] = 0 - 2
+				x.X[2] = -1
+				x.X[3] = 1 - 2
+				x.X[4] = -1
+				x.X[5] = 2 - 2
+				x.X[6] = -1
+				x.X[7] = 3 - 2
+
+				x.X[8] = 1
+				x.X[9] = 1 - 2
+				x.X[10] = 1
+				x.X[11] = 2 - 2
+			}
 		} else {
 			x.X[0] = -1
 			x.X[1] = 0 - 2
@@ -366,6 +405,8 @@ var (
 	FlagAlternate = flag.Bool("alternate", false, "alternate experiment")
 	// FlagNull null experiment
 	FlagNull = flag.Bool("null", false, "null experiment")
+	// FlagSplit reality split mode
+	FlagSplit = flag.Bool("split", false, "reality split mode")
 	// FlagAll runs all of the experiments
 	FlagAll = flag.Bool("all", false, "run all of the experiments")
 )
@@ -385,6 +426,8 @@ func Simulation() {
 			name = "alternate_casimir.gif"
 		} else if *FlagNull {
 			name = "null_casimir.gif"
+		} else if *FlagSplit {
+			name = "split_casimir.gif"
 		}
 		out, err := os.Create(name)
 		if err != nil {
@@ -418,6 +461,8 @@ func Simulation() {
 			name = "alternate_dist.png"
 		} else if *FlagNull {
 			name = "null_dist.png"
+		} else if *FlagSplit {
+			name = "split_dist.png"
 		}
 		err = p.Save(8*vg.Inch, 8*vg.Inch, name)
 		if err != nil {
@@ -447,6 +492,11 @@ func main() {
 		*FlagNull = true
 		Simulation()
 		*FlagNull = false
+
+		fmt.Println("split")
+		*FlagSplit = true
+		Simulation()
+		*FlagSplit = false
 		return
 	}
 
