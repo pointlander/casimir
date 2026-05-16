@@ -162,23 +162,7 @@ func (n *Neuron) Iterate(iterations int) {
 	for _, x := range n.Set.Weights {
 		if *FlagNull {
 			// no structures
-		} else if !*FlagAlternate {
-			x.X[0] = -1
-			x.X[1] = 0 - 2
-			x.X[2] = -1
-			x.X[3] = 1 - 2
-			x.X[4] = -1
-			x.X[5] = 2 - 2
-			x.X[6] = -1
-			x.X[7] = 3 - 2
-
-			if !*FlagControl {
-				x.X[8] = 0
-				x.X[9] = 1 - 2
-				x.X[10] = 0
-				x.X[11] = 2 - 2
-			}
-		} else {
+		} else if *FlagAlternate {
 			x.X[0] = 0
 			x.X[1] = 0 - 2
 			x.X[2] = 0
@@ -191,6 +175,29 @@ func (n *Neuron) Iterate(iterations int) {
 			x.X[8] = -1
 			x.X[9] = 1 - 2
 			x.X[10] = -1
+			x.X[11] = 2 - 2
+		} else if *FlagControl {
+			x.X[0] = -1
+			x.X[1] = 0 - 2
+			x.X[2] = -1
+			x.X[3] = 1 - 2
+			x.X[4] = -1
+			x.X[5] = 2 - 2
+			x.X[6] = -1
+			x.X[7] = 3 - 2
+		} else {
+			x.X[0] = -1
+			x.X[1] = 0 - 2
+			x.X[2] = -1
+			x.X[3] = 1 - 2
+			x.X[4] = -1
+			x.X[5] = 2 - 2
+			x.X[6] = -1
+			x.X[7] = 3 - 2
+
+			x.X[8] = 0
+			x.X[9] = 1 - 2
+			x.X[10] = 0
 			x.X[11] = 2 - 2
 		}
 	}
