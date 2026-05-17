@@ -162,9 +162,9 @@ func (n *Neuron) Iterate(iterations int) {
 	if *FlagSplit {
 		x := n.Set.ByName["x"]
 		y := n.Set.ByName["y"]
-		for i, value := range x.X {
-			x.X[i] = (value + y.X[i]) / 2
-			y.X[i] = (value + y.X[i]) / 2
+		for i, xx := range x.X {
+			yy := y.X[i]
+			x.X[i], y.X[i] = (xx+yy)/2, (xx+yy)/2
 		}
 	}
 
