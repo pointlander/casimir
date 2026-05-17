@@ -163,7 +163,7 @@ func (n *Neuron) Iterate(iterations int) {
 		x := n.Set.ByName["x"]
 		y := n.Set.ByName["y"]
 		for i, value := range x.X {
-			y.X[i] = value
+			y.X[i] = (value + y.X[i]) / 2
 		}
 	}
 

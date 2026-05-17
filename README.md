@@ -47,3 +47,8 @@ The number of particles to the right of the structure are plotted together for b
 ![null simulation](null_casimir.gif?raw=true)
 ### Number of particles to the right of the null structure
 ![null plot](null_dist.png?raw=true)
+## Split
+### Simulation
+![split simulation](split_casimir.gif?raw=true)
+### Number of particles to the right of the structure
+![split plot](split_dist.png?raw=true)
